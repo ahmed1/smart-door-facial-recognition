@@ -45,10 +45,10 @@ paths:
               type: "string"
             Access-Control-Allow-Headers:
               type: "string"
-definitions:
-  Empty:
-    type: "object"
-    title: "Empty Schema"
+#definitions:
+#  Empty:
+#    type: "object"
+#    title: "Empty Schema"
 ### definitions need more work
 definitions:
   OwnerRequest:
