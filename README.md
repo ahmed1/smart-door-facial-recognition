@@ -13,3 +13,8 @@ This application will try to simulate a system that allows a user to be granted 
 
 #### Notes to deploy lambda function
 1. Created S3 bucket to use with cloudformation: smart-door-cloudformation-template
+2. Function names must be alphanumeric.
+
+
+
+
