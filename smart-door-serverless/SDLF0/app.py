@@ -4,6 +4,8 @@ import json
 
 
 def lambda_handler(event, context):
+
+    print('EVENT: ', event)
     """Sample pure Lambda function
 
     Parameters
@@ -32,7 +34,7 @@ def lambda_handler(event, context):
     #     print(e)
 
     #     raise e
-
+    res = "Hello"
     return {
         "statusCode": 200,
         'headers': {

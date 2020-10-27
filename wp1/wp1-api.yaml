@@ -1,32 +1,22 @@
 ---
 swagger: "2.0"
 info:
-  description: "Owner application used to authenticate new users"
-  version: "1.0.0"
-  title: "Owner API"
-host: "j5i3cdzlg4.execute-api.us-east-1.amazonaws.com"
-basePath: "/prod"
+  version: "2020-10-27T21:25:39Z"
+  title: "smart-door-wp1" # -wp1
+host: "pz7u792kx7.execute-api.us-east-1.amazonaws.com"
+basePath: "/dev"
 schemes:
 - "https"
 paths:
   /annex-owner:
     post:
-      operationId: "sendMessage"
-      consumes:
-      - "application/json"
       produces:
       - "application/json"
-      parameters:
-      - in: "body"
-        name: "BotRequest"
-        required: true
-        schema:
-          $ref: "#/definitions/BotRequest"
       responses:
         200:
           description: "200 response"
           schema:
-            $ref: "#/definitions/BotResponse"
+            $ref: "#/definitions/Empty"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
@@ -36,20 +26,6 @@ paths:
               type: "string"
             Access-Control-Allow-Headers:
               type: "string"
-      x-amazon-apigateway-integration:
-        uri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:922059106485:function:chatbot-message-handler-LF0Function-1I2FQ53GKOC3Q/invocations"
-        responses:
-          default:
-            statusCode: "200"
-            responseParameters:
-              method.response.header.Access-Control-Allow-Credentials: "'true'"
-              method.response.header.Access-Control-Allow-Methods: "'POST'"
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-        passthroughBehavior: "when_no_match"
-        httpMethod: "POST"
-        contentHandling: "CONVERT_TO_TEXT"
-        type: "aws"
     options:
       consumes:
       - "application/json"
@@ -58,6 +34,8 @@ paths:
       responses:
         200:
           description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
           headers:
             Access-Control-Allow-Origin:
               type: "string"
@@ -67,21 +45,13 @@ paths:
               type: "string"
             Access-Control-Allow-Headers:
               type: "string"
-      x-amazon-apigateway-integration:
-        responses:
-          default:
-            statusCode: "200"
-            responseParameters:
-              method.response.header.Access-Control-Allow-Credentials: "'true'"
-              method.response.header.Access-Control-Allow-Methods: "'POST'"
-              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
-              method.response.header.Access-Control-Allow-Origin: "'*'"
-        requestTemplates:
-          application/json: "{\"statusCode\": 200}"
-        passthroughBehavior: "when_no_match"
-        type: "mock"
 definitions:
-  BotRequest:
+  Empty:
+    type: "object"
+    title: "Empty Schema"
+### definitions need more work
+definitions:
+  OwnerRequest:
     type: "object"
     properties:
       messages:
@@ -105,7 +75,7 @@ definitions:
       timestamp:
         type: "string"
         format: "datetime"
-  BotResponse:
+  OwnerResponse:
     type: "object"
     properties:
       messages:
@@ -123,5 +93,6 @@ x-amazon-apigateway-gateway-responses:
       gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
       gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
       gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+
 
 
