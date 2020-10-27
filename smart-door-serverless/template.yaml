@@ -6,34 +6,63 @@ Description: >
   Sample SAM Template for smart-door-serverless
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-Globals:
-  Function:
-    Timeout: 3
+# Globals:
+#   Function:
+#     Timeout: 3
 
 Resources:
-  HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  SDLF0Function:
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: hello_world/
+      CodeUri: ./SDLF0/
       Handler: app.lambda_handler
       Runtime: python3.7
+      Timeout: 200
       Events:
-        HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+        SDLF0:
+          Type: Api 
           Properties:
-            Path: /hello
+            Path: /SDLF0
+            Method: get
+
+  SDLF1Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./SDLF1/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Timeout: 200
+      Events:
+        SDLF0:
+          Type: Api 
+          Properties:
+            Path: /SDLF1
+            Method: get
+
+  SDLF2Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./SDLF2/
+      Handler: app.lambda_handler
+      Runtime: python3.7
+      Timeout: 200
+      Events:
+        SDLF0:
+          Type: Api 
+          Properties:
+            Path: /SDLF2
             Method: get
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
+  SDLF0WorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
+  SDLF0Function:
     Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
+    Value: !GetAtt SDLF0Function.Arn
+  SDLF0FunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+    Value: !GetAtt SDLF0FunctionRole.Arn
