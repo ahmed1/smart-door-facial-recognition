@@ -20,3 +20,8 @@ This application will try to simulate a system that allows a user to be granted 
 #### API Gateway
 1. Manually add all CORS Headers to ensure proper pre-flight authentication.
 2. Added complete definitions for both user / owner apis under wp1 and wp2.
+
+
+#### S3
+1. Created b1-visitor-vault to store unstructured data
+2. Could add more security to this bucket and add to IAC
