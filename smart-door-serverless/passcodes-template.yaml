@@ -10,7 +10,7 @@ Description: >-
 Parameters:
   HashKeyElementName:
     Description: HashType PrimaryKey Name
-    Default : 
+    Default :
     Type: String
     AllowedPattern: '[a-zA-Z0-9]*'
     MinLength: '1'
