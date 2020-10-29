@@ -1,62 +1,22 @@
 {
-  "body": "{\"message\": \"hello world\"}",
-  "resource": "/{proxy+}",
-  "path": "/path/to/resource",
-  "httpMethod": "POST",
-  "isBase64Encoded": false,
-  "queryStringParameters": {
-    "foo": "bar"
-  },
-  "pathParameters": {
-    "proxy": "/path/to/resource"
-  },
-  "stageVariables": {
-    "baz": "qux"
-  },
-  "headers": {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-    "Accept-Encoding": "gzip, deflate, sdch",
-    "Accept-Language": "en-US,en;q=0.8",
-    "Cache-Control": "max-age=0",
-    "CloudFront-Forwarded-Proto": "https",
-    "CloudFront-Is-Desktop-Viewer": "true",
-    "CloudFront-Is-Mobile-Viewer": "false",
-    "CloudFront-Is-SmartTV-Viewer": "false",
-    "CloudFront-Is-Tablet-Viewer": "false",
-    "CloudFront-Viewer-Country": "US",
-    "Host": "1234567890.execute-api.us-east-1.amazonaws.com",
-    "Upgrade-Insecure-Requests": "1",
-    "User-Agent": "Custom User Agent String",
-    "Via": "1.1 08f323deadbeefa7af34d5feb414ce27.cloudfront.net (CloudFront)",
-    "X-Amz-Cf-Id": "cDehVQoZnx43VYQb9j2-nvCh-9z396Uhbp027Y2JvkCPNLmGJHqlaA==",
-    "X-Forwarded-For": "127.0.0.1, 127.0.0.2",
-    "X-Forwarded-Port": "443",
-    "X-Forwarded-Proto": "https"
-  },
-  "requestContext": {
-    "accountId": "123456789012",
-    "resourceId": "123456",
-    "stage": "prod",
-    "requestId": "c6af9ac6-7b61-11e6-9a41-93e8deadbeef",
-    "requestTime": "09/Apr/2015:12:34:56 +0000",
-    "requestTimeEpoch": 1428582896000,
-    "identity": {
-      "cognitoIdentityPoolId": null,
-      "accountId": null,
-      "cognitoIdentityId": null,
-      "caller": null,
-      "accessKey": null,
-      "sourceIp": "127.0.0.1",
-      "cognitoAuthenticationType": null,
-      "cognitoAuthenticationProvider": null,
-      "userArn": null,
-      "userAgent": "Custom User Agent String",
-      "user": null
-    },
-    "path": "/prod/path/to/resource",
-    "resourcePath": "/{proxy+}",
-    "httpMethod": "POST",
-    "apiId": "1234567890",
-    "protocol": "HTTP/1.1"
-  }
+  "Records": 
+  [
+    {
+      "kinesis": 
+      {
+        "kinesisSchemaVersion": "1.0", 
+        "partitionKey": "31043cc9-1a3f-41d1-b64c-21022e8f8578", 
+        "sequenceNumber": "49612154773891998788439172516684755288675491347920060418", 
+        "data": "eyJJbnB1dEluZm9ybWF0aW9uIjp7IktpbmVzaXNWaWRlbyI6eyJTdHJlYW1Bcm4iOiJhcm46YXdzOmtpbmVzaXN2aWRlbzp1cy1lYXN0LTE6OTIyMDU5MTA2NDg1OnN0cmVhbS90ZXN0LzE2MDM4NTc3MTk5NDMiLCJGcmFnbWVudE51bWJlciI6IjkxMzQzODUyMzMzMTgxNDkxODI4NjU5MjI4ODAyMTQwNzE0NzYwMDExOTA0Mjk1IiwiU2VydmVyVGltZXN0YW1wIjoxLjYwMzkzNzY5NDcxRTksIlByb2R1Y2VyVGltZXN0YW1wIjoxLjYwMzkzNzY5MjM0MkU5LCJGcmFtZU9mZnNldEluU2Vjb25kcyI6MC41MDE5OTk5NzQyNTA3OTM1fX0sIlN0cmVhbVByb2Nlc3NvckluZm9ybWF0aW9uIjp7IlN0YXR1cyI6IlJVTk5JTkcifSwiRmFjZVNlYXJjaFJlc3BvbnNlIjpbeyJEZXRlY3RlZEZhY2UiOnsiQm91bmRpbmdCb3giOnsiSGVpZ2h0IjowLjQ0MDExNDk1LCJXaWR0aCI6MC4yNzY4MDE0LCJMZWZ0IjowLjQyMjg0MTgsIlRvcCI6MC4yODYyNjIyfSwiQ29uZmlkZW5jZSI6OTkuOTk2NjA1LCJMYW5kbWFya3MiOlt7IlgiOjAuNDkwNzQ5MDMsIlkiOjAuNDQ3MzY4MSwiVHlwZSI6ImV5ZUxlZnQifSx7IlgiOjAuNjEyNDI5LCJZIjowLjQ0NDU2MTYsIlR5cGUiOiJleWVSaWdodCJ9LHsiWCI6MC41MDE3NzYxNiwiWSI6MC42MTQ3NzY3MywiVHlwZSI6Im1vdXRoTGVmdCJ9LHsiWCI6MC42MDM1MDU4NSwiWSI6MC42MTIyOTQ0LCJUeXBlIjoibW91dGhSaWdodCJ9LHsiWCI6MC41NTE5MDI5LCJZIjowLjUzNDkzOTUsIlR5cGUiOiJub3NlIn1dLCJQb3NlIjp7IlBpdGNoIjozLjYyNjA5MzQsIlJvbGwiOi0xLjM4MDc3MjEsIllhdyI6MC40MTgzNDc4fSwiUXVhbGl0eSI6eyJCcmlnaHRuZXNzIjo3NC43MDk4NSwiU2hhcnBuZXNzIjoyNi4xNzczNjh9fSwiTWF0Y2hlZEZhY2VzIjpbeyJTaW1pbGFyaXR5Ijo5OS45OTgwMiwiRmFjZSI6eyJCb3VuZGluZ0JveCI6eyJIZWlnaHQiOjAuMzY5MzU3LCJXaWR0aCI6MC41NjUxNTEsIkxlZnQiOjAuMjAyNzY3LCJUb3AiOjAuMzE3ODY3fSwiRmFjZUlkIjoiYmU4OGY0MGMtZGQ1Zi00MmU3LWI1MjItNDM2NTlhNWRhMmRkIiwiQ29uZmlkZW5jZSI6OTkuOTk0ODk2LCJJbWFnZUlkIjoiZTY4OWE1MGQtMGFhYS0zOWJhLWE1NWYtMjZkYzBkMmVlN2VjIiwiRXh0ZXJuYWxJbWFnZUlkIjoiYWhtZWQtc2hvdWtyIn19LHsiU2ltaWxhcml0eSI6OTkuOTk3ODEsIkZhY2UiOnsiQm91bmRpbmdCb3giOnsiSGVpZ2h0IjowLjM0MjQ2NSwiV2lkdGgiOjAuNTIyNzc3LCJMZWZ0IjowLjIwODQ4MiwiVG9wIjowLjI5Njc1NX0sIkZhY2VJZCI6Ijk2MjgxOTRiLTgzMzMtNDJkMi1hYjQxLTIwM2ZhOTk0Mzk0MSIsIkNvbmZpZGVuY2UiOjk5Ljk5MDEsIkltYWdlSWQiOiJmMjc4MTM4NS04NDI1LTM3NDgtOTA0ZC02ZWNlNTIyYmIyOGEiLCJFeHRlcm5hbEltYWdlSWQiOiJhaG1lZC1zaG91a3IifX0seyJTaW1pbGFyaXR5Ijo5OS45OTYzOSwiRmFjZSI6eyJCb3VuZGluZ0JveCI6eyJIZWlnaHQiOjAuNDcwNzU0LCJXaWR0aCI6MC42NDg5NDgsIkxlZnQiOjAuMTgwNjY2LCJUb3AiOjAuMjY5MTY2fSwiRmFjZUlkIjoiYmY5NDUxNTAtMTU1ZS00MmYwLWFhZTMtZDgwM2YyOGQxYmY5IiwiQ29uZmlkZW5jZSI6OTkuOTk3LCJJbWFnZUlkIjoiNGI3NzMxNTYtMWYwYS0zYzVjLWE5ZWEtZWRmNTc5ZWFjNmY5IiwiRXh0ZXJuYWxJbWFnZUlkIjoiYWhtZWQtc2hvdWtyIn19LHsiU2ltaWxhcml0eSI6OTkuOTk0NDksIkZhY2UiOnsiQm91bmRpbmdCb3giOnsiSGVpZ2h0IjowLjEzNjU3OSwiV2lkdGgiOjAuMjI2NjUxLCJMZWZ0IjowLjIzMjI3NiwiVG9wIjowLjIyNzgyMX0sIkZhY2VJZCI6IjQ5YWNiOTYzLThhOTItNDgzZS05N2JhLTU3NTU3MDIyNWQyOCIsIkNvbmZpZGVuY2UiOjk5Ljk5NjksIkltYWdlSWQiOiJkZTBlOWY3NS01NzU4LTMxY2MtYTI3ZC0wM2JjNGI2OTU2MjYiLCJFeHRlcm5hbEltYWdlSWQiOiJhaG1lZC1zaG91a3IifX1dfV19", 
+        "approximateArrivalTimestamp": 1603937696.464
+      }, 
+        "eventSource": "aws:kinesis", 
+        "eventVersion": "1.0",
+        "eventID": "shardId-000000000000:49612154773891998788439172516684755288675491347920060418", 
+        "eventName": "aws:kinesis:record", 
+        "invokeIdentityArn": "arn:aws:iam::922059106485:role/smart-door-message-handler-SDLF1FunctionRole-1LRQYPFY7VFW", 
+        "awsRegion": "us-east-1", 
+        "eventSourceARN": "arn:aws:kinesis:us-east-1:922059106485:stream/KDS1"
+    }
+  ]
 }

@@ -5,7 +5,9 @@ import json
 
 def lambda_handler(event, context):
 
-    print('EVENT: ', event)
+    print('EVENTT: ', event)
+    if 'FaceSearchResponse' in event:
+        print('I GOT IT!!!!!')
     """Sample pure Lambda function
 
     Parameters

@@ -21,8 +21,7 @@ if __name__ == '__main__':
         Name='first-stream',
         Settings={
             'FaceSearch': {
-                'CollectionId': 'Collection',
-                'FaceMatchThreshold': 80.0
+                'CollectionId': 'Collection'
             }
         },
         RoleArn='arn:aws:iam::922059106485:role/Rekognition-Access-Role'
