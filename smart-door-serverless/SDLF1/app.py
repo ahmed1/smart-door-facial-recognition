@@ -1,46 +1,33 @@
 import json
-
-# import requests
+import jwt
+import base64
+import requests
 
 
 def lambda_handler(event, context):
+    """
+    The event contains records given by Kinesis Data Streams Service: 
+    https://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html
 
-    print('EVENTT: ', event)
-    if 'FaceSearchResponse' in event:
-        print('I GOT IT!!!!!')
-    """Sample pure Lambda function
+    Message is Base64-encoded binary data object 
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
-
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
-
-    context: object, required
-        Lambda Context runtime methods and attributes
-
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
     """
 
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
+    base64_img = event['Records'][0]['kinesis']['data']
+    base64_img_bytes = base64_img.encode('utf-8')
+    decoded_image_data = base64.decodebytes(base64_img_bytes)
+    decoded_image_data = decoded_image_data.decode('utf-8')
 
-    #     raise e
+    data = eval(decoded_image_data)
+
+    print(data)
+
+
 
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "hello world",
-            # "location": ip.text.replace("\n", "")
+            "message": "Under Development",
+
         }),
     }
