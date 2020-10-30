@@ -97,12 +97,14 @@ def lambda_handler(event, context):
     # No Face
     if len(data['FaceSearchResponse']) == 0:
         # sys.exit()
+        print('No Faces Detected')
         pass
 
 
     # Face Not Seen Before
     elif len(data['FaceSearchResponse'][0]['MatchedFaces']) == 0:
     # Need to extract face
+        print('Not Seen Face Before')
         pass
 
 
@@ -118,7 +120,7 @@ def lambda_handler(event, context):
         external_id = top_match[1]
 
         # Extract Face
-        extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id='new_person_2') # still need to see what this will return 
+        img_s3_names, img_temp_names = extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id) # still need to see what this will return 
 
         # generate OTP
         otp = generate_otp()

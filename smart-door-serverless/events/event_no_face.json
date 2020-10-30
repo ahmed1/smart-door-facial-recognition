@@ -1,0 +1,38 @@
+{
+    "Records": 
+    [
+        {
+            "kinesis": 
+            {
+                "kinesisSchemaVersion": "1.0", 
+                "partitionKey": "3d3b4847-acde-492e-9c89-6391105a39ec", 
+                "sequenceNumber": "49612154773891998788439172525211309094418249302635708418", 
+                "data": "eyJJbnB1dEluZm9ybWF0aW9uIjp7IktpbmVzaXNWaWRlbyI6eyJTdHJlYW1Bcm4iOiJhcm46YXdzOmtpbmVzaXN2aWRlbzp1cy1lYXN0LTE6OTIyMDU5MTA2NDg1OnN0cmVhbS90ZXN0LzE2MDM4NTc3MTk5NDMiLCJGcmFnbWVudE51bWJlciI6IjkxMzQzODUyMzMzMTgxNTMxODE0MTIyNDk3NzE5OTI2NjM0NTg1NzAxMTg5MzQwIiwiU2VydmVyVGltZXN0YW1wIjoxLjYwMzk0OTAyMTc2OEU5LCJQcm9kdWNlclRpbWVzdGFtcCI6MS42MDM5NDkwMTk0OTFFOSwiRnJhbWVPZmZzZXRJblNlY29uZHMiOjAuNTAwOTk5OTg3MTI1Mzk2N319LCJTdHJlYW1Qcm9jZXNzb3JJbmZvcm1hdGlvbiI6eyJTdGF0dXMiOiJSVU5OSU5HIn0sIkZhY2VTZWFyY2hSZXNwb25zZSI6W119", 
+                "approximateArrivalTimestamp": 1603949023.45
+            }, 
+                "eventSource": "aws:kinesis", 
+                "eventVersion": "1.0", 
+                "eventID": "shardId-000000000000:49612154773891998788439172525211309094418249302635708418", 
+                "eventName": "aws:kinesis:record", 
+                "invokeIdentityArn": "arn:aws:iam::922059106485:role/smart-door-message-handler-SDLF1FunctionRole-1LRQYPFY7VFW", 
+                "awsRegion": "us-east-1", 
+                "eventSourceARN": "arn:aws:kinesis:us-east-1:922059106485:stream/KDS1"
+        }, 
+        {
+            "kinesis": 
+            {
+                "kinesisSchemaVersion": "1.0", 
+                "partitionKey": "c5f490cf-dc51-45fc-ad4f-e1cee9832618", 
+                "sequenceNumber": "49612154773891998788439172525212518020237864000529891330", 
+                "data": "eyJJbnB1dEluZm9ybWF0aW9uIjp7IktpbmVzaXNWaWRlbyI6eyJTdHJlYW1Bcm4iOiJhcm46YXdzOmtpbmVzaXN2aWRlbzp1cy1lYXN0LTE6OTIyMDU5MTA2NDg1OnN0cmVhbS90ZXN0LzE2MDM4NTc3MTk5NDMiLCJGcmFnbWVudE51bWJlciI6IjkxMzQzODUyMzMzMTgxNTMxODE5MDc0MjU3ODc3MDY4MTU2MDM0NTIxNDA1MTE0IiwiU2VydmVyVGltZXN0YW1wIjoxLjYwMzk0OTAyMzA2OUU5LCJQcm9kdWNlclRpbWVzdGFtcCI6MS42MDM5NDkwMjA5OUU5LCJGcmFtZU9mZnNldEluU2Vjb25kcyI6MS4wMDE5OTk5NzQyNTA3OTM1fX0sIlN0cmVhbVByb2Nlc3NvckluZm9ybWF0aW9uIjp7IlN0YXR1cyI6IlJVTk5JTkcifSwiRmFjZVNlYXJjaFJlc3BvbnNlIjpbXX0=", 
+                "approximateArrivalTimestamp": 1603949024.684}, 
+                "eventSource": "aws:kinesis", 
+                "eventVersion": "1.0", 
+                "eventID": "shardId-000000000000:49612154773891998788439172525212518020237864000529891330", 
+                "eventName": "aws:kinesis:record", 
+                "invokeIdentityArn": "arn:aws:iam::922059106485:role/smart-door-message-handler-SDLF1FunctionRole-1LRQYPFY7VFW", 
+                "awsRegion": "us-east-1", 
+                "eventSourceARN": "arn:aws:kinesis:us-east-1:922059106485:stream/KDS1"
+        }
+    ]
+}
