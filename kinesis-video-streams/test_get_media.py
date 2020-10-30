@@ -10,7 +10,6 @@ def save_face(fname, external_id):
     cap = cv2.VideoCapture(fname)
     num_imgs_saved = 0
     while (cap.isOpened()):
-#        print('here')
         ret, frame = cap.read()
         if ret == False:
             print('Ran out of bytes')
@@ -19,7 +18,7 @@ def save_face(fname, external_id):
         img_s3_name = external_id + '/' + 'image' + str(num_imgs_saved) + '.jpeg'
         img_s3_names.append(img_s3_name)
         
-        img_temp_name = 'tmp/image' + str(num_imgs_saved) + '.jpeg'
+        img_temp_name = '/tmp/image' + str(num_imgs_saved) + '.jpeg'
         img_temp_names.append(img_temp_name)
         cv2.imwrite(img_temp_name, frame)
         num_imgs_saved += 1
@@ -46,7 +45,7 @@ def extract_face(fragment_number, external_id):
     )
 
     print(response)
-    fname = 'tmp/' + external_id + '.webm'
+    fname = '/tmp/' + external_id + '.webm'
     with open(fname, 'wb+') as f:
         chunk = response['Payload'].read(50000)
         f.write(chunk)
@@ -64,10 +63,7 @@ def extract_face(fragment_number, external_id):
     
     for idx, img_name in enumerate(img_s3_names):
         s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
-        
-#    with open ('rand.jpg', 'rb') as f:
-#        s3.upload_fileobj(f, 'b1-vault', 'rand.jpg')
-#    print('wrote files to s3!!!!')
+
     return img_s3_names, img_temp_names
     
     

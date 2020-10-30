@@ -1,0 +1,22 @@
+{
+    "Records": 
+    [
+        {
+            "kinesis": 
+            {
+                "kinesisSchemaVersion": "1.0", 
+                "partitionKey": "2e830ba6-3e63-4adf-87fb-c31d4019ee8b", 
+                "sequenceNumber": "49612154773891998788439172525205264465320175813164793858", 
+                "data": "eyJJbnB1dEluZm9ybWF0aW9uIjp7IktpbmVzaXNWaWRlbyI6eyJTdHJlYW1Bcm4iOiJhcm46YXdzOmtpbmVzaXN2aWRlbzp1cy1lYXN0LTE6OTIyMDU5MTA2NDg1OnN0cmVhbS90ZXN0LzE2MDM4NTc3MTk5NDMiLCJGcmFnbWVudE51bWJlciI6IjkxMzQzODUyMzMzMTgxNTMxNzk5MjY3MjE3MjQ4NTAyMDcwMDY1MzMyNzIzOTAzIiwiU2VydmVyVGltZXN0YW1wIjoxLjYwMzk0OTAxNzIxN0U5LCJQcm9kdWNlclRpbWVzdGFtcCI6MS42MDM5NDkwMTQ5OTNFOSwiRnJhbWVPZmZzZXRJblNlY29uZHMiOjAuOTk5MDAwMDEyODc0NjAzM319LCJTdHJlYW1Qcm9jZXNzb3JJbmZvcm1hdGlvbiI6eyJTdGF0dXMiOiJSVU5OSU5HIn0sIkZhY2VTZWFyY2hSZXNwb25zZSI6W3siRGV0ZWN0ZWRGYWNlIjp7IkJvdW5kaW5nQm94Ijp7IkhlaWdodCI6MC4zMTcyOTE1MywiV2lkdGgiOjAuMTgxNzg2NTQsIkxlZnQiOjAuNDU5NTk2MzQsIlRvcCI6MC4xOTYzNDU1Mn0sIkNvbmZpZGVuY2UiOjk5Ljk5NDUxNCwiTGFuZG1hcmtzIjpbeyJYIjowLjQ5NDI1MTgsIlkiOjAuMzEzNzU4NjcsIlR5cGUiOiJleWVMZWZ0In0seyJYIjowLjU3NDMyMzIsIlkiOjAuMjk2MjgzMjUsIlR5cGUiOiJleWVSaWdodCJ9LHsiWCI6MC41MTU0NjU4NiwiWSI6MC40MjIwNzQyMywiVHlwZSI6Im1vdXRoTGVmdCJ9LHsiWCI6MC41ODI1OTQ4LCJZIjowLjQwNzU1MjI0LCJUeXBlIjoibW91dGhSaWdodCJ9LHsiWCI6MC41Mzk1MTA3LCJZIjowLjM2ODI2NjY3LCJUeXBlIjoibm9zZSJ9XSwiUG9zZSI6eyJQaXRjaCI6MS44OTU3ODYzLCJSb2xsIjotMTAuNTEyMjc5LCJZYXciOi0zLjI2NTM1MjJ9LCJRdWFsaXR5Ijp7IkJyaWdodG5lc3MiOjUzLjkyNTcwNSwiU2hhcnBuZXNzIjo5LjkxMjkwNH19LCJNYXRjaGVkRmFjZXMiOltdfV19", 
+                "approximateArrivalTimestamp": 1603949018.779
+            }, 
+                "eventSource": "aws:kinesis", 
+                "eventVersion": "1.0", 
+                "eventID": "shardId-000000000000:49612154773891998788439172525205264465320175813164793858", 
+                "eventName": "aws:kinesis:record", 
+                "invokeIdentityArn": "arn:aws:iam::922059106485:role/smart-door-message-handler-SDLF1FunctionRole-1LRQYPFY7VFW", 
+                "awsRegion": "us-east-1", 
+                "eventSourceARN": "arn:aws:kinesis:us-east-1:922059106485:stream/KDS1"
+        }
+    ]
+}

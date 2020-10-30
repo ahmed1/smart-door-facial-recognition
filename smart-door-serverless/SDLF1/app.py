@@ -6,7 +6,30 @@ import sys
 from random import randint
 import cv2
 
-def extract_face(fragment_number):
+
+def save_face(fname, external_id):
+
+    img_s3_names = []
+    img_temp_names = []
+    cap = cv2.VideoCapture(fname)
+    num_imgs_saved = 0
+    while (cap.isOpened()):
+        ret, frame = cap.read()
+        if ret == False:
+            print('Ran out of bytes')
+            break
+            
+        img_s3_name = external_id + '/' + 'image' + str(num_imgs_saved) + '.jpeg'
+        img_s3_names.append(img_s3_name)
+        
+        img_temp_name = '/tmp/image' + str(num_imgs_saved) + '.jpeg'
+        img_temp_names.append(img_temp_name)
+        cv2.imwrite(img_temp_name, frame)
+        num_imgs_saved += 1
+    
+    return img_s3_names, img_temp_names
+
+def extract_face(fragment_number, external_id):
     stream_arn = 'arn:aws:kinesisvideo:us-east-1:922059106485:stream/test/1603857719943'
 
 
@@ -14,11 +37,6 @@ def extract_face(fragment_number):
 
     endpoint = kinesis_client.get_data_endpoint(StreamARN=stream_arn, APIName='GET_MEDIA')
     endpoint = endpoint['DataEndpoint']
-
-
-
-
-    start_selector_type = 'FRAGMENT_NUMBER'
 
     client = boto3.client('kinesis-video-media', endpoint_url=endpoint , region_name = 'us-east-1')
 
@@ -31,14 +49,26 @@ def extract_face(fragment_number):
     )
 
     print(response)
-    print('exiting')
-    frame = response['Payload'].read()
+    fname = '/tmp/' + external_id + '.webm'
+    with open(fname, 'wb+') as f:
+        chunk = response['Payload'].read(50000)
+        f.write(chunk)
+        
+    # call function
+    img_s3_names, img_temp_names = save_face(fname, external_id)
+    # function worked
+    print(img_s3_names, img_temp_names)
+    print()
+    print()
 
-    with open('/tmp/stream.avi', 'wb') as f:
-        f.write(frame)
-        cap = cv2.VideoCapture('file.mvi')
 
+    
+    s3 = boto3.client('s3')
+    
+    for idx, img_name in enumerate(img_s3_names):
+        s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
 
+    return img_s3_names, img_temp_names
 
 
 def generate_otp():
@@ -88,17 +118,18 @@ def lambda_handler(event, context):
         external_id = top_match[1]
 
         # Extract Face
-        extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber']) # still need to see what this will return 
+        extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id='new_person_2') # still need to see what this will return 
 
         # generate OTP
         otp = generate_otp()
 
         # Store OTP in passcodes table with external_id as key (this will automatically occur with the post request?)
 
+        """
         client = boto3.client('sns')
         phone_number = '+14085691957'
         client.publish(PhoneNumber=phone_number, Message = notification)
-
+        """
 
 
     return {
