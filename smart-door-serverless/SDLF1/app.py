@@ -1,10 +1,45 @@
 import json
-import jwt
+import boto3
 import base64
 import requests
 import sys
 from random import randint
 import cv2
+
+def extract_face(fragment_number):
+    stream_arn = 'arn:aws:kinesisvideo:us-east-1:922059106485:stream/test/1603857719943'
+
+
+    kinesis_client = boto3.client('kinesisvideo',region_name='us-east-1')
+
+    endpoint = kinesis_client.get_data_endpoint(StreamARN=stream_arn, APIName='GET_MEDIA')
+    endpoint = endpoint['DataEndpoint']
+
+
+
+
+    start_selector_type = 'FRAGMENT_NUMBER'
+
+    client = boto3.client('kinesis-video-media', endpoint_url=endpoint , region_name = 'us-east-1')
+
+    response = client.get_media(
+        StreamARN=stream_arn,
+        StartSelector={
+            'StartSelectorType': 'FRAGMENT_NUMBER',
+            'AfterFragmentNumber': fragment_number
+        }
+    )
+
+    print(response)
+    print('exiting')
+    frame = response['Payload'].read()
+
+    with open('/tmp/stream.avi', 'wb') as f:
+        f.write(frame)
+        cap = cv2.VideoCapture('file.mvi')
+
+
+
 
 def generate_otp():
     return randint(100000, 999999)
@@ -30,8 +65,9 @@ def lambda_handler(event, context):
 
     # Check for face
     # No Face
-    if len(data['FaceSearchResponse'] == 0):
-        sys.exit()
+    if len(data['FaceSearchResponse']) == 0:
+        # sys.exit()
+        pass
 
 
     # Face Not Seen Before
@@ -51,12 +87,16 @@ def lambda_handler(event, context):
         top_match = sorted(matched_faces, key = lambda elem : elem[0])[0]
         external_id = top_match[1]
 
+        # Extract Face
+        extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber']) # still need to see what this will return 
+
         # generate OTP
         otp = generate_otp()
 
         # Store OTP in passcodes table with external_id as key (this will automatically occur with the post request?)
 
         client = boto3.client('sns')
+        phone_number = '+14085691957'
         client.publish(PhoneNumber=phone_number, Message = notification)
 
 
