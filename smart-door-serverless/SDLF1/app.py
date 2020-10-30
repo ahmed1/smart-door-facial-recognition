@@ -119,9 +119,17 @@ def lambda_handler(event, context):
         top_match = sorted(matched_faces, key = lambda elem : elem[0])[0]
         external_id = top_match[1]
 
-        # Extract Face
+        # Need number of images stored in Dynamo for known person
+
+
+
+        # Extract Face and put in S3
+        # img_s3_names contains keys for all images inserted in S3
         img_s3_names, img_temp_names = extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id) # still need to see what this will return 
 
+        
+        
+        
         # generate OTP
         otp = generate_otp()
 
