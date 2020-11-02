@@ -2,3 +2,5 @@ packaged.yaml
 deploy.sh
 deploy-passcodes-table.sh
 kinesis-video-streams/tmp/*
+smart-door-serverless/.aws-sam
+

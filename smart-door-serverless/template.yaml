@@ -6,63 +6,90 @@ Description: >
   Sample SAM Template for smart-door-serverless
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-# Globals:
-#   Function:
-#     Timeout: 3
+Globals:
+  Function:
+    Timeout: 200
 
 Resources:
   SDLF0Function:
-    Type: AWS::Serverless::Function
+    Type: AWS::Serverless::Function 
     Properties:
+      FunctionName: SDLF0
       CodeUri: ./SDLF0/
-      Handler: app.lambda_handler
+      Handler: owner.lambda_handler
       Runtime: python3.7
-      Timeout: 200
-      Events:
-        SDLF0:
-          Type: Api 
-          Properties:
-            Path: /SDLF0
-            Method: get
+
 
   SDLF1Function:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: SDLF1
       CodeUri: ./SDLF1/
-      Handler: app.lambda_handler
+      Handler: stream.lambda_handler
       Runtime: python3.7
-      Timeout: 200
-      Events:
-        SDLF0:
-          Type: Api 
-          Properties:
-            Path: /SDLF1
-            Method: get
+
+      Layers:
+      - !Ref ProcessingLayer
+      # - arn:aws:lambda:us-east-1:922059106485:layer:ProcessingLib:3
+
 
   SDLF2Function:
     Type: AWS::Serverless::Function
     Properties:
+      FunctionName: SDLF2
       CodeUri: ./SDLF2/
-      Handler: app.lambda_handler
+      Handler: user.lambda_handler
       Runtime: python3.7
-      Timeout: 200
-      Events:
-        SDLF0:
-          Type: Api 
-          Properties:
-            Path: /SDLF2
-            Method: get
+
+  
+  ProcessingLib:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src/layers/processingLib/
+      Handler: processing_lib.lambda_handler
+      Runtime: python3.7
+
+
+  ProcessingLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      Description: Lambda layer for writing own data cleaning library to be used in lambda functions.
+      LayerName: ProcessingLib
+      ContentUri: ./.aws-sam/build/ProcessingLib
+      CompatibleRuntimes: 
+        - python3.7
+      RetentionPolicy: Delete
+    DependsOn: ProcessingLib
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  SDLF0WorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
+
   SDLF0Function:
     Description: "Hello World Lambda Function ARN"
     Value: !GetAtt SDLF0Function.Arn
   SDLF0FunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt SDLF0FunctionRole.Arn
+
+
+  SDLF1Function:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt SDLF1Function.Arn
+  SDLF1FunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt SDLF1FunctionRole.Arn
+
+  SDLF2Function:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt SDLF2Function.Arn
+  SDLF2FunctionIamRole:
+    Description: "Implicit IAM Role created for Hello World function"
+    Value: !GetAtt SDLF2FunctionRole.Arn
+
+
+  ProcessingLib:
+    Description: "Hello World Lambda Function ARN"
+    Value: !GetAtt ProcessingLib.Arn
+

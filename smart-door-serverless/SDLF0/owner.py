@@ -1,10 +1,16 @@
 import json
+import sys
 
-# import requests
+
+# Required for loading of local data clean package
+sys.path.append("/opt")
+
+import clean_lib
+
 
 
 def lambda_handler(event, context):
-
+    clean_lib.print_hello('ash')
     print('EVENT: ', event)
     """Sample pure Lambda function
 

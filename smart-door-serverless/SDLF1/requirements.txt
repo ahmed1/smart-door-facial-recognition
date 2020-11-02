@@ -1,2 +1,2 @@
 requests
-opencv-python
+opencv-python-headless==4.4.0.42
