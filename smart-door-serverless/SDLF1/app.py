@@ -5,9 +5,10 @@ import requests
 import sys
 from random import randint
 import cv2
+import datetime
+import uuid
 
-
-def save_face(fname, external_id):
+def save_face_tmp(fname, external_id):
 
     img_s3_names = []
     img_temp_names = []
@@ -55,26 +56,36 @@ def extract_face(fragment_number, external_id):
         f.write(chunk)
         
     # call function
-    img_s3_names, img_temp_names = save_face(fname, external_id)
+    img_s3_names, img_temp_names = save_face_tmp(fname, external_id)
     # function worked
     print(img_s3_names, img_temp_names)
     print()
     print()
 
-
-    
-    s3 = boto3.client('s3')
-    
-    for idx, img_name in enumerate(img_s3_names):
-        s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
-
     return img_s3_names, img_temp_names
 
+
+
+def save_face_s3(img_s3_names, img_temp_names):
+    s3 = boto3.client('s3')
+    s3_resource = boto3.resource('s3')
+    for idx, img_name in enumerate(img_s3_names):
+        s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
+        
+        # setting public read for link
+        object_acl = s3.ObjectAcl('b1-vault', img_name)
+        response = object_acl.put(ACL='public-read')
+        # should verify response here
+    return img_s3_names, img_temp_names
+
+def generate_rand_uuid():
+    return uuid.uuid4().hex
 
 def generate_otp():
     return randint(100000, 999999)
 
 def lambda_handler(event, context):
+    print(event)
     """
     The event contains records given by Kinesis Data Streams Service: 
     https://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html
@@ -105,6 +116,21 @@ def lambda_handler(event, context):
     elif len(data['FaceSearchResponse'][0]['MatchedFaces']) == 0:
     # Need to extract face
         print('Not Seen Face Before')
+
+
+
+        api_url = "https://pz7u792kx7.execute-api.us-east-1.amazonaws.com/dev/annex-owner"
+        temp_face_id = generate_rand_uuid()
+        test_notification = "Would you like to let: " + temp_face_id + " in?"
+
+
+
+
+
+
+        client = boto3.client('sns')
+        phone_number = '+14085691957'
+        client.publish(PhoneNumber=phone_number, Message = test_notification)
         pass
 
 
@@ -118,6 +144,7 @@ def lambda_handler(event, context):
         matched_faces = [(matched_face['Similarity'], matched_face['Face']['ExternalImageId']) for matched_face in data['FaceSearchResponse'][0]['MatchedFaces']]
         top_match = sorted(matched_faces, key = lambda elem : elem[0])[0]
         external_id = top_match[1]
+        fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber']
 
         # Need number of images stored in Dynamo for known person
 
@@ -125,13 +152,39 @@ def lambda_handler(event, context):
 
         # Extract Face and put in S3
         # img_s3_names contains keys for all images inserted in S3
-        img_s3_names, img_temp_names = extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id) # still need to see what this will return 
+        img_s3_names, img_temp_names = extract_face(fragment_number = fragment_number, external_id=external_id) # still need to see what this will return 
+        img_s3_names, img_temp_names = save_face_s3(img_s3_names, img_temp_names) # put them in s3
 
-        
-        
+
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        table = dynamodb.Table('visitors')
+        # put 2 images only for now
+        count = 0
+        for key in img_s3_names:
+            if count ==2:
+                break
+            photo = {}
+            photo['objectKey'] = key.split('/')[1]
+            photo['bucket'] = key.split('/')[0]
+            photo['createdTimestamp'] = str(datetime.datetime.now())
+
+            response = table.update_item(
+                Key = {
+                    'faceId' : data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId']
+                },
+                UpdateExpression="SET photos = list_append(photos, :i)",
+                ExpressionAttributeValues={
+                    ':i': [photo],
+                },
+                ReturnValues="UPDATED_NEW" # can use later if want or set to none
+            )
+            count +=1
         
         # generate OTP
         otp = generate_otp()
+
+
+
 
         # Store OTP in passcodes table with external_id as key (this will automatically occur with the post request?)
 

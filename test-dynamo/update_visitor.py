@@ -23,13 +23,7 @@ def update_visitor(dynamodb=None):
         },
         ReturnValues="UPDATED_NEW"
     )
-#AttributeUpdates={
-#    'photos': {
-#        'Value': photo,
-#        'Action': 'ADD'|'PUT'|'DELETE'
-#    }
-#},
-#
+
 
 
 

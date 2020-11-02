@@ -1,3 +1,4 @@
 packaged.yaml
 deploy.sh
 deploy-passcodes-table.sh
+kinesis-video-streams/tmp/*
