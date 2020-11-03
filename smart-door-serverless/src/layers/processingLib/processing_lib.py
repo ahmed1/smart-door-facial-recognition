@@ -149,21 +149,21 @@ def send_sns_request_to_user(external_id, temp_passcode):
     
     client = boto3.client('sns')
     phone_number = get_user_phone_number(external_id)
-    url = 'https://somethingwithapigateway.com/post/?someparameter'
-    notification = "Hello there, welcome to the door simulation. Please enter the passcode provided in this url webpage. URL: {} Passcode: {}".format(url, temp_passcode)
+    url = 'https://s4el8lc5m2.execute-api.us-east-1.amazonaws.com/dev/annex-user'
+    notification = "Hello there, welcome to the door simulation. Please enter the passcode and ID provided in this url webpage. URL: {} Passcode: {} ID: {}".format(url, temp_passcode, external_id)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
 
 
 def construct_url_for_unknown_user_image(img_s3_names):
     return ['https://b1-vault.s3.amazonaws.com/' + img_key for img_key in img_s3_names][0]
 
-def send_sns_request_to_owner(img_s3_names):
+def send_sns_request_to_owner(external_id, img_s3_names):
     client = boto3.client('sns')
     
     phone_number = '+14085691957'
-    post_url = 'https://somethingwithapigateway.com/post/?someparameter'
+    post_url = 'https://pz7u792kx7.execute-api.us-east-1.amazonaws.com/dev/annex-owner'
     img_url = construct_url_for_unknown_user_image(img_s3_names)
     
     
-    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {}".format(post_url, img_url)
+    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {} ID: ".format(post_url, img_url, external_id)
     res = client.publish(PhoneNumber=phone_number, Message = notification)

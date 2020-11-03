@@ -52,7 +52,7 @@ def lambda_handler(event, context):
         1. Send owner SMS with url and photo (URL) -> they can give back name and phone number
         2. No other concerns here
         """
-        processing_lib.send_sns_request_to_owner(img_s3_names)
+        processing_lib.send_sns_request_to_owner(external_id=external_id, img_s3_names=img_s3_names)
 
 
 
