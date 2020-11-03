@@ -7,6 +7,7 @@ from random import randint
 import cv2
 from datetime import datetime, timezone, timedelta
 
+# required for lambda layer
 sys.path.append("/opt")
 import processing_lib
 
@@ -36,8 +37,22 @@ def lambda_handler(event, context):
     elif len(data['FaceSearchResponse'][0]['MatchedFaces']) == 0:
     # Need to extract face
         print('Not Seen Face Before')
-        pass
+        
+        external_id = processing_lib.generate_rand_uuid()
 
+        img_s3_names, img_temp_names = processing_lib.extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id, num_images = 0) # still need to see what this will return 
+        img_s3_names = processing_lib.make_imgs_public(img_s3_names)
+
+        if not img_s3_names:
+            print('Was not able to write images to s3')
+        print(img_s3_names)
+
+        
+        """
+        1. Send owner SMS with url and photo (URL) -> they can give back name and phone number
+        2. No other concerns here
+        """
+        processing_lib.send_sns_request_to_owner(img_s3_names)
 
 
 
@@ -53,8 +68,8 @@ def lambda_handler(event, context):
         print(external_id)
 
         # Need number of images stored in Dynamo for known person
-        face_id = data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId']
-        print('face id: ', face_id)
+        face_id = data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId'] # not being used
+
         num_images = processing_lib.get_num_images_from_visitors(external_id = external_id)
 
 
@@ -79,7 +94,7 @@ def lambda_handler(event, context):
         print(external_id, temp_passcode)
 
         """
-        1. Generate URLs
+        1. Generate URLs - not valid url constructed right now
         2. Get the person's phone number from visitors table
         2. Send person notification with form and allow them to enter the passcode 
         """
@@ -90,7 +105,7 @@ def lambda_handler(event, context):
     return {
         "statusCode": 200,
         "body": json.dumps({
-            "message": "Under Development",
+            "message": "Success",
 
         }),
     }
