@@ -12,32 +12,22 @@ import processing_lib
 def lambda_handler(event, context):
 
     print('EVENT: ', event)
-    """Sample pure Lambda function
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
+    name = event['Name']
+    user_id = event['UserId']
+    phone_number = event['PhoneNumber']
 
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+    # no additional validation since owner entering information means they allow the person in
 
-    context: object, required
-        Lambda Context runtime methods and attributes
+    # generates and puts the message in the passcodes table with ttl
+    temp_passcode = processing_lib.load_passcode(external_id = user_id)
 
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
+    # create new entry in visitors -- this happens in the owner piece
+    processing_lib.append_visitor_photo(external_id=user_id, name=name, phone_number=phone_number)
 
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
+    # Send SMS to user
+    processing_lib.send_sns_request_to_user(external_id = user_id, temp_passcode = temp_passcode)
+    
 
     #     raise e
     res = "This just needs to tell the owner that it has taken the information"

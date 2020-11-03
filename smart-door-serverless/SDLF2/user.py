@@ -11,35 +11,26 @@ def lambda_handler(event, context):
     print('EVENT: ', event)
 
 
-    """Sample pure Lambda function
+    passcode = str(event['Passcode'])
+    user_id = str(event['UserId'])
 
-    Parameters
-    ----------
-    event: dict, required
-        API Gateway Lambda Proxy Input Format
+    # try to query for person in passcodes
+    if not processing_lib.check_passcode(external_id = user_id, user_passcode = passcode):
+        res = "Permission Denied"
+    else:
+        user_name = processing_lib.get_user_name(external_id=user_id)
+        res = 'Hello, {}. Your authentication is a success. You may enter!'.format(user_name)
 
-        Event doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html#api-gateway-simple-proxy-for-lambda-input-format
+        # put the person in visitors table
+        # if not processing_lib.seen_before(user_id):
+        # create new entry in visitors -- this happens in the owner piece
 
-    context: object, required
-        Lambda Context runtime methods and attributes
+        # train on new person
+        new_faces_appended = processing_lib.index_faces(external_id = user_id)
+        assert new_faces_appended == 1, "No Face has been trained error."
+            
 
-        Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
 
-    Returns
-    ------
-    API Gateway Lambda Proxy Output Format: dict
-
-        Return doc: https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html
-    """
-
-    # try:
-    #     ip = requests.get("http://checkip.amazonaws.com/")
-    # except requests.RequestException as e:
-    #     # Send some context about this error to Lambda Logs
-    #     print(e)
-
-    #     raise e
-    res = "Thank you for your response... This lambda function needs to tell them success by name or permission denied"
 
     return {
         "statusCode": 200,

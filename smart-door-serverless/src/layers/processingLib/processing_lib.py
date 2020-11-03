@@ -72,6 +72,27 @@ def make_imgs_public(img_s3_names):
         response = object_acl.put(ACL='public-read')
 
     return img_s3_names
+    
+def append_photo_visitors(img_s3_names):
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('visitors')
+    for img_name in img_s3_names:
+        photo = {}
+        photo['objectKey'] = img_name
+        photo['bucket'] = 'b1-vault'
+        photo['createdTimestamp'] = str(datetime.datetime.now())
+        
+        response = table.update_item(
+            Key = {
+                'faceId' : img_name.split('/')[0]
+            },
+            UpdateExpression="SET photos = list_append(photos, :i)",
+            ExpressionAttributeValues={
+                ':i': [photo],
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+    return img_s3_names
 
 def extract_face(fragment_number, external_id, num_images):
     stream_arn = 'arn:aws:kinesisvideo:us-east-1:922059106485:stream/test/1603857719943'
@@ -109,6 +130,8 @@ def extract_face(fragment_number, external_id, num_images):
     # function worked
     
     img_s3_names, img_temp_names = save_face_s3(img_s3_names, img_temp_names)
+    
+    
     return img_s3_names, img_temp_names
 
 
@@ -137,13 +160,31 @@ def load_passcode(dynamodb = None, external_id = None):
     table.put_item(Item=row)
     return temp_passcode
 
+def check_passcode(dynamodb = None, external_id = None, user_passcode):
+    if not dynamodb:
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        
+    table = dynamodb.Table('passcodes')
+    
+    passcode = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    if 'Item' in passcode.keys():
+        passcode = passcode['Item']['passcode']['S']
+        if passcode == user_passcode:
+            return True
+        else:
+            return False
+    else:
+        return False
+    
 
 def get_user_phone_number(external_id):
     client = boto3.client('dynamodb')
     user = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
     return user['Item']['phoneNumber']['S']
     
-    
+def get_user_name(external_id):
+    user = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    return user['Item']['name']['S']
     
 def send_sns_request_to_user(external_id, temp_passcode):
     
@@ -167,3 +208,68 @@ def send_sns_request_to_owner(external_id, img_s3_names):
     
     notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {} ID: ".format(post_url, img_url, external_id)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
+
+
+def seen_before(external_id):
+    client = boto3.client('dynamodb')
+    
+    person = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    if 'Item' in person.keys():
+        return True
+    else:
+        return False
+        
+
+
+
+
+
+
+
+
+
+def append_visitor_photo(external_id, name, phone_number): # not yet used -- this is in the owner section
+    
+    dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('visitors')
+    
+    
+    row = {}
+    
+    row['faceId'] = external_id
+    row['name'] = name
+    row['phoneNumber'] = phone_number
+    row['photos'] = []
+    
+    photo = {}
+    photo['objectKey'] = external_id + '/image0.jpeg'
+    photo['bucket'] = 'b1-vault'
+    photo['createdTimestamp'] = str(datetime.datetime.now())
+    
+    row['photos'].append(photo)
+
+    table.put_item(Item=row)
+    
+    
+def index_faces(external_id):
+
+
+
+    client = boto3.client('rekognition')
+    
+    
+    photo = external_id + '/' + 'image0.jpeg'
+    bucket = 'b1-vault'
+    collection_id = 'Collection'
+
+    response = client.index_faces(
+        CollectionId=collection_id,
+        Image={'S3Object': {'Bucket': bucket, 'Name': photo} },
+        ExternalImageId=external_id,
+        DetectionAttributes=['ALL'],
+        QualityFilter="AUTO",
+        MaxFaces=1
+    )
+    
+    return str(len(response['FaceRecords'])) # should be 1 indexed face
+    
