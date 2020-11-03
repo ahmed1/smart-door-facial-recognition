@@ -21,6 +21,7 @@ Resources:
       Layers:
       - !Ref ProcessingLayer
 
+
   SDLF1Function:
     Type: AWS::Serverless::Function
     Properties:
@@ -41,7 +42,8 @@ Resources:
       CodeUri: ./SDLF2/
       Handler: user.lambda_handler
       Runtime: python3.7
-
+      Layers:
+      - !Ref ProcessingLayer
   
   ProcessingLib:
     Type: AWS::Serverless::Function
@@ -49,8 +51,7 @@ Resources:
       CodeUri: ./src/layers/processingLib/
       Handler: processing_lib.lambda_handler
       Runtime: python3.7
-      Layers:
-      - !Ref ProcessingLayer
+
 
   ProcessingLayer:
     Type: AWS::Serverless::LayerVersion
