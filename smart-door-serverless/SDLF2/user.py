@@ -1,7 +1,9 @@
 import json
 
 # import requests
+sys.path.append("/opt")
 
+import clean_lib
 
 def lambda_handler(event, context):
 
