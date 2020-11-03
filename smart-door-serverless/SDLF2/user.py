@@ -10,7 +10,7 @@ def lambda_handler(event, context):
 
     print('EVENT: ', event)
 
-    print(event['code'])
+
     """Sample pure Lambda function
 
     Parameters
@@ -39,7 +39,7 @@ def lambda_handler(event, context):
     #     print(e)
 
     #     raise e
-    res = "Hello"
+    res = "Thank you for your response... This lambda function needs to tell them success by name or permission denied"
 
     return {
         "statusCode": 200,

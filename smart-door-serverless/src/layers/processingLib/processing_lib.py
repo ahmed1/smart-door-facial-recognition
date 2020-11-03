@@ -4,7 +4,7 @@ import base64
 import requests
 import sys
 from random import randint
-import cv2
+
 from datetime import datetime, timezone, timedelta
 import uuid
 
@@ -29,7 +29,7 @@ def get_num_images_from_visitors(external_id):
     
     
 def save_face_tmp(fname, external_id, num_images):
-
+    import cv2
     img_s3_names = []
     img_temp_names = []
     

@@ -10,7 +10,7 @@ import processing_lib
 
 
 def lambda_handler(event, context):
-    clean_lib.print_hello('ash')
+
     print('EVENT: ', event)
     """Sample pure Lambda function
 
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
     #     print(e)
 
     #     raise e
-    res = "Hello"
+    res = "This just needs to tell the owner that it has taken the information"
     return {
         "statusCode": 200,
         'headers': {
