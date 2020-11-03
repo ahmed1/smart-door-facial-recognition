@@ -1,2 +1,4 @@
 requests
-opencv-python-headless==4.4.0.42
+# opencv-python-headless==4.4.0.42
+# opencv-python
+opencv-contrib-python

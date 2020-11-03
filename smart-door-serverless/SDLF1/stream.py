@@ -5,12 +5,12 @@ import requests
 import sys
 from random import randint
 import cv2
+from datetime import datetime, timezone, timedelta
 
 sys.path.append("/opt")
 import processing_lib
 
 def lambda_handler(event, context):
-    print(event)
     """
     The event contains records given by Kinesis Data Streams Service: 
     https://docs.aws.amazon.com/kinesis/latest/APIReference/API_Record.html
@@ -18,21 +18,16 @@ def lambda_handler(event, context):
     Message is Base64-encoded binary data object 
 
     """
-    # for idx in range(len(event['Records'])):
-    # Only taking first Record given
-    base64_img = event['Records'][0]['kinesis']['data']
-    base64_img_bytes = base64_img.encode('utf-8')
-    decoded_image_data = base64.decodebytes(base64_img_bytes)
-    decoded_image_data = decoded_image_data.decode('utf-8')
+    # print(event)
+    
 
-    data = eval(decoded_image_data)
 
-    # print(data)
+    data = processing_lib.extract_event(event)
 
-    # Check for face
+
     # No Face
     if len(data['FaceSearchResponse']) == 0:
-        # sys.exit()
+
         print('No Faces Detected')
         pass
 
@@ -50,32 +45,46 @@ def lambda_handler(event, context):
     # take match with highest confidence
     # use sns to send push notification to visitor
     # need to extract face
-    else: 
+    else:
+        # get external-id of person
         matched_faces = [(matched_face['Similarity'], matched_face['Face']['ExternalImageId']) for matched_face in data['FaceSearchResponse'][0]['MatchedFaces']]
         top_match = sorted(matched_faces, key = lambda elem : elem[0])[0]
         external_id = top_match[1]
+        print(external_id)
 
         # Need number of images stored in Dynamo for known person
+        face_id = data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId']
+        print('face id: ', face_id)
+        num_images = processing_lib.get_num_images_from_visitors(external_id = external_id)
 
 
-
-        # Extract Face and put in S3
-        # img_s3_names contains keys for all images inserted in S3
-        img_s3_names, img_temp_names = processing_lib.extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id) # still need to see what this will return 
-
-        
+        """
+        1. Extract 50k bytes
+        2. Write .webm video in /tmp
+        3. Write .jpeg files in /tmp
+        4. Store in s3 and return the keys
+        """
+        img_s3_names, img_temp_names = processing_lib.extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id, num_images = num_images+1) # still need to see what this will return 
+        if not img_s3_names:
+            print('Was not able to write images to s3')
         print(img_s3_names)
         
-        # generate OTP
-        otp = processing_lib.generate_otp()
-
-        # Store OTP in passcodes table with external_id as key (this will automatically occur with the post request?)
 
         """
-        client = boto3.client('sns')
-        phone_number = '+14085691957'
-        client.publish(PhoneNumber=phone_number, Message = notification)
+        1. Generate OTP
+        2. Put passcode in visitors table
+        3. Return passcode to be sent to user 
         """
+        temp_passcode = processing_lib.load_passcode(external_id = external_id)
+        print(external_id, temp_passcode)
+
+        """
+        1. Generate URLs
+        2. Get the person's phone number from visitors table
+        2. Send person notification with form and allow them to enter the passcode 
+        """
+        processing_lib.send_sns_request_to_user(external_id = external_id, temp_passcode=temp_passcode)
+    
 
 
     return {

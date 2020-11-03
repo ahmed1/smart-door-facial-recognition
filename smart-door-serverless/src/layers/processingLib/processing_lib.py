@@ -5,33 +5,74 @@ import requests
 import sys
 from random import randint
 import cv2
+from datetime import datetime, timezone, timedelta
 
+def extract_event(event):
+    """
+    for idx in range(len(event['Records'])):
+    Only taking first Record given
+    """
+    base64_img = event['Records'][0]['kinesis']['data']
+    base64_img_bytes = base64_img.encode('utf-8')
+    decoded_image_data = base64.decodebytes(base64_img_bytes)
+    decoded_image_data = decoded_image_data.decode('utf-8')
+    data = eval(decoded_image_data)
+    return data
 
-
-
-def save_face(fname, external_id):
+def get_num_images_from_visitors(external_id):
+    client = boto3.client('dynamodb')
+    photos = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    
+    num_images = len(photos['Item']['photos']['L'])
+    return num_images
+    
+    
+def save_face_tmp(fname, external_id, num_images):
 
     img_s3_names = []
     img_temp_names = []
-    cap = cv2.VideoCapture(fname)
+    
+    cap = cv2.VideoCapture(fname) # ERROR
+    
     num_imgs_saved = 0
-    while (cap.isOpened()):
+    while (cap.isOpened() and num_imgs_saved < 1):
         ret, frame = cap.read()
         if ret == False:
             print('Ran out of bytes')
             break
             
-        img_s3_name = external_id + '/' + 'image' + str(num_imgs_saved) + '.jpeg'
+        img_s3_name = external_id + '/' + 'image' + str(num_images) + '.jpeg'
         img_s3_names.append(img_s3_name)
         
-        img_temp_name = '/tmp/image' + str(num_imgs_saved) + '.jpeg'
+        img_temp_name = '/tmp/image' + str(num_images) + '.jpeg'
         img_temp_names.append(img_temp_name)
         cv2.imwrite(img_temp_name, frame)
         num_imgs_saved += 1
+        num_images +=1
     
     return img_s3_names, img_temp_names
+    
+def save_face_s3(img_s3_names, img_temp_names):
+    s3 = boto3.client('s3')
+    
+    for idx, img_name in enumerate(img_s3_names):
+        s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
+        # setting public read for link
+        
+        
+     # should verify response here
+    return img_s3_names, img_temp_names
 
-def extract_face(fragment_number, external_id):
+# only use for first time visitor to send url in sms
+def make_imgs_public(img_s3_names):
+    s3_resource = boto3.resource('s3')
+    for img_name in img_s3_names: # should just use 1 for now
+        object_acl = s3_resource.ObjectAcl('b1-vault', img_name)
+        response = object_acl.put(ACL='public-read')
+
+    return img_s3_names
+
+def extract_face(fragment_number, external_id, num_images):
     stream_arn = 'arn:aws:kinesisvideo:us-east-1:922059106485:stream/test/1603857719943'
 
 
@@ -50,32 +91,66 @@ def extract_face(fragment_number, external_id):
         }
     )
 
-    print(response)
+#    print(response)
+    """
+    Extracting data so far into .webm video file
+    """
+    
     fname = '/tmp/' + external_id + '.webm'
     with open(fname, 'wb+') as f:
         chunk = response['Payload'].read(50000)
         f.write(chunk)
-        
-    # call function
-    img_s3_names, img_temp_names = save_face(fname, external_id)
+    
+    """
+    extract images from video and write them to /tmp/ path
+    """
+    img_s3_names, img_temp_names = save_face_tmp(fname, external_id, num_images)
     # function worked
-    print(img_s3_names, img_temp_names)
-    print()
-    print()
-
-
     
-    s3 = boto3.client('s3')
-    
-    for idx, img_name in enumerate(img_s3_names):
-        s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
-
+    img_s3_names, img_temp_names = save_face_s3(img_s3_names, img_temp_names)
     return img_s3_names, img_temp_names
+
+
 
 
 def generate_otp():
     return randint(100000, 999999)
     
+def generate_rand_uuid():
+     return uuid.uuid4().hex
     
+    
+    
+def load_passcode(dynamodb = None, external_id = None):
+    if not dynamodb:
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        
+    table = dynamodb.Table('passcodes')
+    temp_passcode = generate_otp()
+    row = {}
+    row['faceId'] = external_id
+    row['passcode'] = temp_passcode
+    second_offset = 300
+    timetolive = round((datetime.now(tz=timezone.utc) - datetime(1970, 1,1, tzinfo=timezone.utc) + timedelta(seconds=second_offset)).total_seconds())
+    row['ttl'] = timetolive
+    table.put_item(Item=row)
+    return temp_passcode
+
+
+def get_user_phone_number(external_id):
+    client = boto3.client('dynamodb')
+    user = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    return user['Item']['phoneNumber']['S']
+    
+    
+    
+def send_sns_request_to_user(external_id, temp_passcode):
+    
+    client = boto3.client('sns')
+    phone_number = get_user_phone_number(external_id)
+    url = 'https://somethingwithapigateway.com/post/?someparameter'
+    notification = "Hello there, welcome to the door simulation. Please enter the passcode provided in this url webpage. URL: {} Passcode: {}".format(url, temp_passcode)
+    res = client.publish(PhoneNumber=phone_number, Message = notification)
     
 
+def send_sns_request_to_owner(external_id)
