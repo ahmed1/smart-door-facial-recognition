@@ -13,9 +13,9 @@ def lambda_handler(event, context):
 
     print('EVENT: ', event)
 
-    name = event['Name']
-    user_id = event['UserId']
-    phone_number = event['PhoneNumber']
+    name = str(event['Name'])
+    user_id = str(event['UserId'])
+    phone_number = str(event['PhoneNumber'])
 
     # no additional validation since owner entering information means they allow the person in
 

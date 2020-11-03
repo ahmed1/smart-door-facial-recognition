@@ -15,7 +15,7 @@ def lambda_handler(event, context):
     user_id = str(event['UserId'])
 
     # try to query for person in passcodes
-    if not processing_lib.check_passcode(external_id = user_id, user_passcode = passcode):
+    if not processing_lib.check_passcode(dynamodb = None, external_id = user_id, user_passcode = passcode):
         res = "Permission Denied"
     else:
         user_name = processing_lib.get_user_name(external_id=user_id)
@@ -27,7 +27,8 @@ def lambda_handler(event, context):
 
         # train on new person
         new_faces_appended = processing_lib.index_faces(external_id = user_id)
-        assert new_faces_appended == 1, "No Face has been trained error."
+        # assert new_faces_appended == 1, "No Face has been trained error."
+        print("new_faces_appended ", new_faces_appended)
             
 
 

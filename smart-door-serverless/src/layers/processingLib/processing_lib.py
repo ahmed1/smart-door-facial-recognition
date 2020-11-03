@@ -80,7 +80,7 @@ def append_photo_visitors(img_s3_names):
         photo = {}
         photo['objectKey'] = img_name
         photo['bucket'] = 'b1-vault'
-        photo['createdTimestamp'] = str(datetime.datetime.now())
+        photo['createdTimestamp'] = str(datetime.now())
         
         response = table.update_item(
             Key = {
@@ -138,7 +138,7 @@ def extract_face(fragment_number, external_id, num_images):
 
 
 def generate_otp():
-    return randint(100000, 999999)
+    return str(randint(100000, 999999))
     
 def generate_rand_uuid():
      return uuid.uuid4().hex
@@ -160,13 +160,10 @@ def load_passcode(dynamodb = None, external_id = None):
     table.put_item(Item=row)
     return temp_passcode
 
-def check_passcode(dynamodb = None, external_id = None, user_passcode):
-    if not dynamodb:
-        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
-        
-    table = dynamodb.Table('passcodes')
+def check_passcode(dynamodb, external_id, user_passcode):
+    client = boto3.client('dynamodb')
     
-    passcode = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
+    passcode = client.get_item(TableName = 'passcodes', Key = {'faceId' : {'S' : external_id}   }  )
     if 'Item' in passcode.keys():
         passcode = passcode['Item']['passcode']['S']
         if passcode == user_passcode:
@@ -183,6 +180,7 @@ def get_user_phone_number(external_id):
     return user['Item']['phoneNumber']['S']
     
 def get_user_name(external_id):
+    client = boto3.client('dynamodb')
     user = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : external_id}   }  )
     return user['Item']['name']['S']
     
@@ -190,7 +188,7 @@ def send_sns_request_to_user(external_id, temp_passcode):
     
     client = boto3.client('sns')
     phone_number = get_user_phone_number(external_id)
-    url = 'https://s4el8lc5m2.execute-api.us-east-1.amazonaws.com/dev/annex-user'
+    url = 'http://wp2user.s3-website-us-east-1.amazonaws.com'
     notification = "Hello there, welcome to the door simulation. Please enter the passcode and ID provided in this url webpage. URL: {} Passcode: {} ID: {}".format(url, temp_passcode, external_id)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
 
@@ -202,12 +200,13 @@ def send_sns_request_to_owner(external_id, img_s3_names):
     client = boto3.client('sns')
     
     phone_number = '+14085691957'
-    post_url = 'https://pz7u792kx7.execute-api.us-east-1.amazonaws.com/dev/annex-owner'
+    post_url = 'http://wp1owner.s3-website-us-east-1.amazonaws.com'
     img_url = construct_url_for_unknown_user_image(img_s3_names)
     
     
-    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {} ID: ".format(post_url, img_url, external_id)
+    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {} Their ID is: ".format(post_url, img_url)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
+    res = client.publish(PhoneNumber=phone_number, Message = external_id)
 
 
 def seen_before(external_id):
@@ -244,7 +243,7 @@ def append_visitor_photo(external_id, name, phone_number): # not yet used -- thi
     photo = {}
     photo['objectKey'] = external_id + '/image0.jpeg'
     photo['bucket'] = 'b1-vault'
-    photo['createdTimestamp'] = str(datetime.datetime.now())
+    photo['createdTimestamp'] = str(datetime.now())
     
     row['photos'].append(photo)
 

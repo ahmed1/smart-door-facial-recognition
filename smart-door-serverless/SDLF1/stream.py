@@ -80,6 +80,7 @@ def lambda_handler(event, context):
         4. Store in s3 and return the keys
         """
         img_s3_names, img_temp_names = processing_lib.extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id, num_images = num_images+1) # still need to see what this will return 
+        img_s3_names = processing_lib.append_photo_visitors(img_s3_names) 
         if not img_s3_names:
             print('Was not able to write images to s3')
         print(img_s3_names)
