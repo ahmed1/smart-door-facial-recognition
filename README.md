@@ -10,18 +10,65 @@ This application will try to simulate a system that allows a user to be granted 
 
 
 
+#### Kinesis Video Streams
 
-#### Notes to deploy lambda function
-1. Created S3 bucket to use with cloudformation: smart-door-cloudformation-template
-2. Function names must be alphanumeric.
+#### Rekognition
+
+* sample in `index_faces.py`
+* Set up automatic pipeline to train on new authenticated people
+
+#### Kinesis Data Streams
+
+#### GStreamer C++ SDK
+
+* Built without using docker version
+* `cmake` with `-DBUILD_GSTREAMER_PLUGIN=ON -DBUILD_JNI=TRUE`
+
+```shell
+export PATH=/path/to/gcc-4.9.2/bin/:$PATH
+export LD_LIBRARY_PATH=/path/to/gcc-4.9.2/lib64/:$LD_LIBRARY_PATH
+./configure --prefix=/path/to/  --host=arm
+```
+
+
+
+* https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp
+
+####  Lambda functions
+
+* Created S3 bucket to use with cloudformation: smart-door-cloudformation-template
+* Definitions inlcuded in `template.yaml` 
+
+#### Additional Lambda Layer
+
+* Used `sys.opt.append(/opt)` so lambda looks inside this directory for lambda layer
+
+
 
 
 
 #### API Gateway
-1. Manually add all CORS Headers to ensure proper pre-flight authentication.
-2. Added complete definitions for both user / owner apis under wp1 and wp2.
+* API Definitions included in `yaml` files.
+* Manually add all CORS Headers to ensure proper pre-flight authentication.
+
+* Added complete definitions for both user / owner apis under wp1 and wp2.
+
+* Deployed as static sites using S3 --> could add https with cloudfront and cognito
 
 
 #### S3
 1. Created b1-visitor-vault to store unstructured data
 2. Could add more security to this bucket and add to IAC
+
+
+
+#### DynamoDB
+
+##### Visitors
+
+##### Pascodes
+
+* TTL -- passcodes only valid for 5 minutes.
+
+### 
+
