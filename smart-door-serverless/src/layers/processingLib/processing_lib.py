@@ -13,7 +13,7 @@ def extract_event(event):
     for idx in range(len(event['Records'])):
     Only taking first Record given
     """
-    base64_img = event['Records'][0]['kinesis']['data']
+    base64_img = event['Records'][5]['kinesis']['data'] # rand in batch
     base64_img_bytes = base64_img.encode('utf-8')
     decoded_image_data = base64.decodebytes(base64_img_bytes)
     decoded_image_data = decoded_image_data.decode('utf-8')
@@ -188,8 +188,8 @@ def send_sns_request_to_user(external_id, temp_passcode):
     
     client = boto3.client('sns')
     phone_number = get_user_phone_number(external_id)
-    url = 'http://wp2user.s3-website-us-east-1.amazonaws.com'
-    notification = "Hello there, welcome to the door simulation. Please enter the passcode and ID provided in this url webpage. URL: {} Passcode: {} ID: {}".format(url, temp_passcode, external_id)
+    url = 'http://wp2user.s3-website-us-east-1.amazonaws.com?UserId={}'.format(external_id)
+    notification = "Hello there, welcome to the door simulation. Please enter the passcode and ID provided in this url webpage. URL: {} Passcode: {}".format(url, temp_passcode)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
 
 
@@ -200,13 +200,12 @@ def send_sns_request_to_owner(external_id, img_s3_names):
     client = boto3.client('sns')
     
     phone_number = '+14085691957'
-    post_url = 'http://wp1owner.s3-website-us-east-1.amazonaws.com'
+    post_url = 'http://wp1owner.s3-website-us-east-1.amazonaws.com?UserId={}'.format(external_id)
     img_url = construct_url_for_unknown_user_image(img_s3_names)
     
     
-    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {} Their ID is: ".format(post_url, img_url)
+    notification = "Hello owner, there is a user trying to use the door simulation. Please use the url to provide their name and phone number if you would like to give them access. URL: {} Their picture: {}".format(post_url, img_url)
     res = client.publish(PhoneNumber=phone_number, Message = notification)
-    res = client.publish(PhoneNumber=phone_number, Message = external_id)
 
 
 def seen_before(external_id):

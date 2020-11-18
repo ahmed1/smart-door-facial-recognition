@@ -19,7 +19,7 @@ def lambda_handler(event, context):
     Message is Base64-encoded binary data object 
 
     """
-    # print(event)
+    print(len(event['Records']), event )
     
 
 

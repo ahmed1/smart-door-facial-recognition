@@ -19,6 +19,9 @@ This application will try to simulate a system that allows a user to be granted 
 
 #### Kinesis Data Streams
 
+* Using 1 open shard
+* Retains data for 24 hours 
+
 #### GStreamer C++ SDK
 
 * Built without using docker version
@@ -55,7 +58,10 @@ aws rekognition list-stream-processors
 
 
 
+#### SAM CLI
 
+* Used to develop / test application locally
+* Used docker 2.4.0.0
 
 ####  Lambda functions
 
