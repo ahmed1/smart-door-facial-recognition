@@ -34,6 +34,29 @@ export LD_LIBRARY_PATH=/path/to/gcc-4.9.2/lib64/:$LD_LIBRARY_PATH
 
 * https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp
 
+#### Stream Processor
+
+* Need to create Stream Processor between Kinesis Video / Data Streams and Rekogintion
+* Created using `kinesis-video-streams/rekognition_start_stream_processor.py` 
+* Can check status using: 
+
+```shell
+aws rekognition list-stream-processors
+# Status should be "Running"
+{
+    "StreamProcessors": [
+        {
+            "Name": "first-stream",
+            "Status": "RUNNING"
+        }
+    ]
+}
+```
+
+
+
+
+
 ####  Lambda functions
 
 * Created S3 bucket to use with cloudformation: smart-door-cloudformation-template
