@@ -42,7 +42,7 @@ def index_faces(collection_id, bucket, photos, name):
     
 def main():
     bucket = 'b1-vault'
-    photos = ['ahmed-shoukr-photo-1.jpeg', 'ahmed-shoukr-photo-2.jpeg', 'ahmed-shoukr-photo-3.jpeg', 'ahmed-shoukr-photo-4.jpeg']
+    photos = ['ahmed-shoukr-photo-1.jpeg'] #, 'ahmed-shoukr-photo-2.jpeg', 'ahmed-shoukr-photo-3.jpeg', 'ahmed-shoukr-photo-4.jpeg']
     collection_id='Collection'
     index_faces(collection_id, bucket, photos, 'ahmed-shoukr')
     
