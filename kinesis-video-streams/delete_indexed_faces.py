@@ -15,8 +15,7 @@ def delete_faces_from_collection(collection_id, faces):
 def main():
 
     collection_id='Collection'
-    faces=['0b413b5a-50dd-49a3-bea9-6cdda5446135', '9628194b-8333-42d2-ab41-203fa9943941',
-    '49acb963-8a92-483e-97ba-575570225d28', 'b3927e49-b003-4b32-a42a-60de491bdf7f', 'be88f40c-dd5f-42e7-b522-43659a5da2dd', 'bf945150-155e-42f0-aae3-d803f28d1bf9']
+    faces=['0e9e24ee-b519-4843-99ba-1a7b41236757', 'c2ace978-7234-4462-a8dc-c28cd8615a34']
 
     faces_count=delete_faces_from_collection(collection_id, faces)
     print("deleted faces count: " + str(faces_count))

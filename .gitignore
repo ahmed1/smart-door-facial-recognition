@@ -3,4 +3,5 @@ deploy.sh
 deploy-passcodes-table.sh
 kinesis-video-streams/tmp/*
 smart-door-serverless/.aws-sam
-
+wp1-owner/userprofile.js
+wp1-owner/verifier.js

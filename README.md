@@ -35,6 +35,8 @@ This application will try to simulate a system that allows a user to be granted 
 
 #### Kinesis Video Streams
 
+* Used to stream video using GStreamer
+
 #### Rekognition
 
 * sample in `index_faces.py`
@@ -121,10 +123,37 @@ Resources:
 * Note, to allow streaming to work properly, I used the following configuration for `SDLF1`: 
   * `Batch size: 100`, `Batch window: 30`, `Concurent batches per shard: 1`
 
+
+
 #### Additional Lambda Layer
+
+
 
 * Used `sys.opt.append(/opt)` so lambda looks inside this directory for lambda function acting as lambda layer
 * Used to give good separation of concerns for the lambda functions.
+
+```python
+# used fragment_number to extract image of person
+client = boto3.client('kinesis-video-media', endpoint_url=endpoint , region_name = 'us-east-1')
+
+    response = client.get_media(
+        StreamARN=stream_arn,
+        StartSelector={
+            'StartSelectorType': 'FRAGMENT_NUMBER',
+            'AfterFragmentNumber': fragment_number
+        }
+    )
+
+```
+
+
+
+```python
+# also used open-cv to capture the frame to store in s3 and send to owner or train after authenticated
+cap = cv2.VideoCapture(fname)
+ret, frame = cap.read()
+cv2.imwrite(img_temp_name, frame)
+```
 
 #### DynamoDB
 
@@ -141,3 +170,4 @@ Resources:
 
 
 ##### Note: Once a new User is authenticated, the simulator will automatically train on their image so they are authenticated automatically in the future.
+
