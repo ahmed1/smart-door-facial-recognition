@@ -4,8 +4,6 @@ This application will try to simulate a system that allows a user to be granted 
 
 ## Architecture Overview
 
----
-
 ![](images/door-architecture.png)
 
 
