@@ -13,7 +13,7 @@ def load_visitor(dynamodb=None):
     
     row = {}
     
-    row['faceId'] = '9628194b-8333-42d2-ab41-203fa9943941'
+    row['faceId'] = 'ahmed-shoukr'#'9628194b-8333-42d2-ab41-203fa9943941'
     row['name'] = "Ahmed Shoukr"
     row['phoneNumber'] = "+14085691957"
     row['photos'] = []

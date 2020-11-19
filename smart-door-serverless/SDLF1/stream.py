@@ -68,7 +68,7 @@ def lambda_handler(event, context):
         print(external_id)
 
         # Need number of images stored in Dynamo for known person
-        face_id = data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId'] # not being used
+        face_id = data['FaceSearchResponse'][0]['MatchedFaces'][0]['Face']['FaceId'] # not being used, since not unique to person depending on how many images used to train that person initially
 
         num_images = processing_lib.get_num_images_from_visitors(external_id = external_id)
 
@@ -76,7 +76,7 @@ def lambda_handler(event, context):
         """
         1. Extract 50k bytes
         2. Write .webm video in /tmp
-        3. Write .jpeg files in /tmp
+        3. Write .jpeg files in /tmp (using opencv)
         4. Store in s3 and return the keys
         """
         img_s3_names, img_temp_names = processing_lib.extract_face(fragment_number = data['InputInformation']['KinesisVideo']['FragmentNumber'], external_id=external_id, num_images = num_images+1) # still need to see what this will return 

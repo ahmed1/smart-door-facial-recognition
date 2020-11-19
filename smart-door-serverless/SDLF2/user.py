@@ -18,7 +18,11 @@ def lambda_handler(event, context):
     if not processing_lib.check_passcode(dynamodb = None, external_id = user_id, user_passcode = passcode):
         res = "Permission Denied"
     else:
-        user_name = processing_lib.get_user_name(external_id=user_id)
+        # delete the passcode
+        processing_lib.delete_passcode(dynamodb = None, external_id = user_id)
+
+        # generage response
+        user_name = processing_lib.get_user_name(external_id=user_id) # to personalize response
         res = 'Hello, {}. Your authentication is a success. You may enter!'.format(user_name)
 
         # put the person in visitors table

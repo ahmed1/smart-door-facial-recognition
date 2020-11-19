@@ -32,7 +32,14 @@
             // add content type header to object
             myHeaders.append("Content-Type", "application/json");
             // using built in JSON utility package turn object to string and store in a variable
-            var raw = JSON.stringify({"Passcode":Passcode});
+            
+            const params = new URLSearchParams(window.location.search);
+            
+            
+            const x = Array.from(params.keys()).reduce((acc, key) => ({ ...acc, [key]: params.get(key) } ), {});
+            
+            
+            var raw = JSON.stringify({"Passcode":Passcode,"UserId":x['UserId']});
             // create a JSON object with parameters for API call and store in a variable
             var requestOptions = {
                 method: 'POST',

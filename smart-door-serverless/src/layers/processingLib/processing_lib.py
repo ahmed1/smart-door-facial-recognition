@@ -28,15 +28,15 @@ def get_num_images_from_visitors(external_id):
     return num_images
     
     
-def save_face_tmp(fname, external_id, num_images):
+def save_face_tmp(fname, external_id, num_images): # num images incremented from stream.py
     import cv2
     img_s3_names = []
     img_temp_names = []
     
-    cap = cv2.VideoCapture(fname) # ERROR
+    cap = cv2.VideoCapture(fname) 
     
     num_imgs_saved = 0
-    while (cap.isOpened() and num_imgs_saved < 1):
+    while (cap.isOpened() and num_imgs_saved < 1): # just save one image
         ret, frame = cap.read()
         if ret == False:
             print('Ran out of bytes')
@@ -49,23 +49,27 @@ def save_face_tmp(fname, external_id, num_images):
         img_temp_names.append(img_temp_name)
         cv2.imwrite(img_temp_name, frame)
         num_imgs_saved += 1
-        num_images +=1
-    
+        num_images +=1 # not necessary here
+
+    assert len(img_s3_names) == 1, -1
+    assert len(img_temp_names) == 1, -1
+
     return img_s3_names, img_temp_names
     
 def save_face_s3(img_s3_names, img_temp_names):
+    assert len(img_s3_names) == 1, -1
     s3 = boto3.client('s3')
     
     for idx, img_name in enumerate(img_s3_names):
         s3.put_object(Bucket = 'b1-vault', Key = img_name, Body = open(img_temp_names[idx], 'rb').read() )
         # setting public read for link
         
-        
-     # should verify response here
+    # should verify response here
     return img_s3_names, img_temp_names
 
 # only use for first time visitor to send url in sms
 def make_imgs_public(img_s3_names):
+    assert len(img_s3_names) == 1, -1
     s3_resource = boto3.resource('s3')
     for img_name in img_s3_names: # should just use 1 for now
         object_acl = s3_resource.ObjectAcl('b1-vault', img_name)
@@ -95,6 +99,9 @@ def append_photo_visitors(img_s3_names):
     return img_s3_names
 
 def extract_face(fragment_number, external_id, num_images):
+    """
+    Using get_data_endpoint for permissions
+    """
     stream_arn = 'arn:aws:kinesisvideo:us-east-1:922059106485:stream/test/1603857719943'
 
 
@@ -102,6 +109,9 @@ def extract_face(fragment_number, external_id, num_images):
 
     endpoint = kinesis_client.get_data_endpoint(StreamARN=stream_arn, APIName='GET_MEDIA')
     endpoint = endpoint['DataEndpoint']
+    """
+    Now can extract response using fragment_number provided in event
+    """
 
     client = boto3.client('kinesis-video-media', endpoint_url=endpoint , region_name = 'us-east-1')
 
@@ -113,7 +123,7 @@ def extract_face(fragment_number, external_id, num_images):
         }
     )
 
-#    print(response)
+
     """
     Extracting data so far into .webm video file
     """
@@ -124,13 +134,16 @@ def extract_face(fragment_number, external_id, num_images):
         f.write(chunk)
     
     """
-    extract images from video and write them to /tmp/ path
+    extract 1 image from video and write them to /tmp path
     """
     img_s3_names, img_temp_names = save_face_tmp(fname, external_id, num_images)
     # function worked
+
+    """
+    Write image to s3 
+    """
     
     img_s3_names, img_temp_names = save_face_s3(img_s3_names, img_temp_names)
-    
     
     return img_s3_names, img_temp_names
 
@@ -159,6 +172,13 @@ def load_passcode(dynamodb = None, external_id = None):
     row['ttl'] = timetolive
     table.put_item(Item=row)
     return temp_passcode
+
+def delete_passcode(dynamodb=None, external_id=None): # only used once the user authenticates themself
+    if not dynamodb:
+            dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    table = dynamodb.Table('passcodes')
+    response = table.delete_item(Key = {'faceId': str(external_id)})
+    return response
 
 def check_passcode(dynamodb, external_id, user_passcode):
     client = boto3.client('dynamodb')
@@ -270,4 +290,3 @@ def index_faces(external_id):
     )
     
     return str(len(response['FaceRecords'])) # should be 1 indexed face
-    
