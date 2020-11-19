@@ -1,18 +1,37 @@
 # smart-door-facial-recognition
 
-
+---
 
 This application will try to simulate a system that allows a user to be granted access to a location using facial recognition. This applicaiton will be built on AWS. Here is a preliminary baseline architecture. 
 
+## Architecture Overview
 
+---
 
 ![](images/door-architecture.png)
 
 
 
+## Individual Components
+
+---
+
 ###### All code for serveless application, including lambda functions, lambda layer, test / deploy scripts included.
 
+#### S3
 
+* Used to host static web pages `wp1-owner` and `wp2-user`
+* Used to deploy infrastructure templates to Cloudformation (and for version control)
+* Used to persist photos of users in the database
+
+#### API Gateway
+
+* API Definitions included in `yaml` files.
+* Manually add all CORS Headers to ensure proper pre-flight authentication.
+  * Includes `Access-Control-Allow-Headers, Access-Control-Allow-Origin, Access-Control-Allow-Credentials, Access-Control-Allow-Methods` in `Method Response` under `OPTIONS` and `POST`
+  * Also added `Content-Type, X-Amz-Date, Authorization, X-APi-Key, X-Amz-Security-Token', '*', 'true', POST'` in `Integration Response` under `OPTIONS` and `POST`. 
+* Added complete swagger definitions for both user / owner apis under wp1 and wp2.
+* Deployed as static sites using S3. In the future, I could add https with cloudfront and cognito.
 
 #### Kinesis Video Streams
 
@@ -83,23 +102,28 @@ sam deploy --template-file ./packaged.yaml --stack-name smart-door-message-handl
 * Definitions inlcuded in `template.yaml` 
 * All code dockerized with `requirements.txt` for additional packages used such as `opencv-contrib-python` for `SDLF1`
 
+```yaml
+# Lambda Function setup with Lambda Layer:
+Resources:
+  SDLF0Function:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: SDLF0
+      CodeUri: ./SDLF0/
+      Handler: owner.lambda_handler
+      Runtime: python3.7
+      Layers:
+      - !Ref ProcessingLayer
+```
+
+* Note, must include `sys.path.append("/opt")` in any lambda function using this layer so it looks in this directory for the layer.
+
+
+
 #### Additional Lambda Layer
 
 * Used `sys.opt.append(/opt)` so lambda looks inside this directory for lambda function acting as lambda layer
 * Used to give good separation of concerns for the lambda functions.
-
-#### API Gateway
-* API Definitions included in `yaml` files.
-* Manually add all CORS Headers to ensure proper pre-flight authentication.
-
-* Added complete definitions for both user / owner apis under wp1 and wp2.
-
-* Deployed as static sites using S3 --> could add https with cloudfront and cognito
-
-
-#### S3
-1. Created b1-visitor-vault to store unstructured data
-2. Could add as IAC 
 
 #### DynamoDB
 
