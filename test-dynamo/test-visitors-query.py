@@ -5,9 +5,11 @@ import boto3
 if __name__ == '__main__':
     client = boto3.client('dynamodb')
     
-    photos = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : 'ahmed-x'}   }  )
+    image_key = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : 'ahmed-shoukr'}   }  )
     
-    print(photos.keys())
+    print(image_key['Item']['photos']['L'][-1]['M']['objectKey']['S'])
+    print()
+    print(image_key.keys())
 #    print(photos)
 #    print(len(photos['Item']['photos']['L'])) # gives number of photos stored
 #

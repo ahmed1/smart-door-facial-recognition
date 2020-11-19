@@ -175,7 +175,7 @@ def load_passcode(dynamodb = None, external_id = None):
 
 def delete_passcode(dynamodb=None, external_id=None): # only used once the user authenticates themself
     if not dynamodb:
-            dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
     table = dynamodb.Table('passcodes')
     response = table.delete_item(Key = {'faceId': str(external_id)})
     return response
@@ -192,7 +192,16 @@ def check_passcode(dynamodb, external_id, user_passcode):
             return False
     else:
         return False
+
+def get_image_key(dynamodb=None, external_id=None):
+    client = boto3.client('dynamodb')
+    if not dynamodb:
+        dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+    image_key = client.get_item(TableName = 'visitors', Key = {'faceId' : {'S' : str(external_id)}   }  )
+
     
+    return image_key['Item']['photos']['L'][-1]['M']['objectKey']['S'] # last image stored
+
 
 def get_user_phone_number(external_id):
     client = boto3.client('dynamodb')
@@ -269,20 +278,19 @@ def append_visitor_photo(external_id, name, phone_number): # not yet used -- thi
     table.put_item(Item=row)
     
     
-def index_faces(external_id):
+def index_faces(external_id, image_key):
 
 
 
     client = boto3.client('rekognition')
     
     
-    photo = external_id + '/' + 'image0.jpeg'
     bucket = 'b1-vault'
     collection_id = 'Collection'
 
     response = client.index_faces(
         CollectionId=collection_id,
-        Image={'S3Object': {'Bucket': bucket, 'Name': photo} },
+        Image={'S3Object': {'Bucket': bucket, 'Name': image_key} }, # image key includes pathway
         ExternalImageId=external_id,
         DetectionAttributes=['ALL'],
         QualityFilter="AUTO",

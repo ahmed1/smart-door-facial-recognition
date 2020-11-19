@@ -10,6 +10,10 @@ This application will try to simulate a system that allows a user to be granted 
 
 
 
+###### All code for serveless application, including lambda functions, lambda layer, test / deploy scripts included.
+
+
+
 #### Kinesis Video Streams
 
 #### Rekognition
@@ -33,7 +37,7 @@ export LD_LIBRARY_PATH=/path/to/gcc-4.9.2/lib64/:$LD_LIBRARY_PATH
 ./configure --prefix=/path/to/  --host=arm
 ```
 
-
+* Used `width=640, height=480, framerate=10, bitrate=500` for streaming
 
 * https://github.com/awslabs/amazon-kinesis-video-streams-producer-sdk-cpp
 
@@ -62,19 +66,27 @@ aws rekognition list-stream-processors
 
 * Used to develop / test application locally
 * Used docker 2.4.0.0
+* Used this script for deploying to s3 bucket `smart-door-cloudformation-template` , then cloudformation to create stack:
+
+```shell
+# this also helped keep different versions of deployment persisted in blob storage
+sam build --use-container --template-file template.yaml
+sam package --s3-bucket smart-door-cloudformation-template --output-template-file packaged.yaml
+sam deploy --template-file ./packaged.yaml --stack-name smart-door-message-handler --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND
+```
+
+
 
 ####  Lambda functions
 
 * Created S3 bucket to use with cloudformation: smart-door-cloudformation-template
 * Definitions inlcuded in `template.yaml` 
+* All code dockerized with `requirements.txt` for additional packages used such as `opencv-contrib-python` for `SDLF1`
 
 #### Additional Lambda Layer
 
-* Used `sys.opt.append(/opt)` so lambda looks inside this directory for lambda layer
-
-
-
-
+* Used `sys.opt.append(/opt)` so lambda looks inside this directory for lambda function acting as lambda layer
+* Used to give good separation of concerns for the lambda functions.
 
 #### API Gateway
 * API Definitions included in `yaml` files.
@@ -87,17 +99,20 @@ aws rekognition list-stream-processors
 
 #### S3
 1. Created b1-visitor-vault to store unstructured data
-2. Could add more security to this bucket and add to IAC
-
-
+2. Could add as IAC 
 
 #### DynamoDB
 
 ##### Visitors
 
+* Visitors table includes `face_id`, `name`, `phoneNumber`, `photos` list
+
 ##### Pascodes
 
-* TTL -- passcodes only valid for 5 minutes.
+* TTL -- passcodes only valid for 5 minutes
+  * Note: this may not be instant in dynamodb
+* Only valid for user one time, then they are deleted
 
-### 
 
+
+##### Note: Once a new User is authenticated, the simulator will automatically train on their image so they are authenticated automatically in the future.

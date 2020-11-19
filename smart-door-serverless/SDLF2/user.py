@@ -29,8 +29,10 @@ def lambda_handler(event, context):
         # if not processing_lib.seen_before(user_id):
         # create new entry in visitors -- this happens in the owner piece
 
+        # get the last image key stored for the person
+        image_key = processing_lib.get_image_key(external_id = user_id)
         # train on new person
-        new_faces_appended = processing_lib.index_faces(external_id = user_id)
+        new_faces_appended = processing_lib.index_faces(external_id = user_id, image_key = image_key)
         # assert new_faces_appended == 1, "No Face has been trained error."
         print("new_faces_appended ", new_faces_appended)
             
