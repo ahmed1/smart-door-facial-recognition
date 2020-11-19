@@ -118,7 +118,8 @@ Resources:
 
 * Note, must include `sys.path.append("/opt")` in any lambda function using this layer so it looks in this directory for the layer.
 
-
+* Note, to allow streaming to work properly, I used the following configuration for `SDLF1`: 
+  * `Batch size: 100`, `Batch window: 30`, `Concurent batches per shard: 1`
 
 #### Additional Lambda Layer
 
