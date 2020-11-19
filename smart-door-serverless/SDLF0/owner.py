@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     
 
     #     raise e
-    res = "This just needs to tell the owner that it has taken the information"
+    res = "Thank you for providing this information."
     return {
         "statusCode": 200,
         'headers': {
